@@ -56,7 +56,7 @@ class RecipeResource(Resource) :
         return {'result' : 'success' ,
                 'info' : result_list[0]}
 
-    # 데이터를 업데이트하는 API들은 put 함수를 사용한다.
+    # 데이터를 update하는 API들은 put 함수를 사용한다.
     def put(self, recipe_id) :
 
         # body에서 전달된 데이터를 처리
