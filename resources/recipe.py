@@ -81,11 +81,11 @@ class RecipeListResource(Resource) :
 
             # 중요 ! DB에서 가져온 timestamp는 파이썬의 datetime으로 자동 변경된다.
             # 문제는 이 데이터를 json으로 바로 보낼 수 없으므로 문자열로 바꿔서 다시 저장시킨 후 보낸다.
-            i=0
+            i = 0
             for record in result_list :
                 result_list[i]['created_at'] = record['created_at'].isoformat()
                 result_list[i]['update_at'] = record['update_at'].isoformat()
-                i = i+1
+                i = i + 1
 
             cursor.close()
             connection.close()
