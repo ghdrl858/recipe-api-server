@@ -11,7 +11,7 @@ class RecipeResource(Resource) :
     # 숫자는 바뀌므로, 변수로 처리해준다.
     def get(self, recipe_id) :
 
-        # 디비에서, recipe_id 에 들어있는 값에 해당되는
+        # DB에서, recipe_id 에 들어있는 값에 해당되는
         # 데이터를 select 해온다.
 
         try :
@@ -32,9 +32,9 @@ class RecipeResource(Resource) :
 
             print(result_list)
 
-            # 중요! 디비에서 가져온 timestamp 는 
+            # 중요! DB에서 가져온 timestamp 는 
             # 파이썬의 datetime 으로 자동 변경된다.
-            # 문제는! 이데이터를 json 으로 바로 보낼수 없으므로,
+            # 문제는! 이 데이터를 json 으로 바로 보낼수 없으므로,
             # 문자열로 바꿔서 다시 저장해서 보낸다.
             i = 0
             for record in result_list :
