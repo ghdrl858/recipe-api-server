@@ -5,7 +5,7 @@ from mysql.connector.errors import Error
 from mysql_connection import get_connection
 import mysql.connector
 from email_validator import validate_email, EmailNotValidError
-from utils import hash_password
+from utils import check_password, hash_password
 
 class UserRegisterResource(Resource) :
     def post(self) :
@@ -84,4 +84,68 @@ class UserRegisterResource(Resource) :
 
 class UserLoginResource(Resource) :
     def post(self) :
-        pass
+        # {
+        #     "email" : "abc@naver.com",
+        #     "password": "1234"
+        # }
+
+        # 1. 클라이언트로부터 데이터를 받아온다.
+        data = request.get_json()
+
+        # 2. 이메일로 DB에 해당 이메일과 일치하는 데이터를 가져온다.
+        try :
+            connection = get_connection()
+
+            query = '''select * 
+                        from user
+                        where email = %s;'''
+            
+            record = (data["email"], )
+
+            # select 문은, dictionary = True 를 해준다.
+            cursor = connection.cursor(dictionary = True)
+
+            cursor.execute(query, record)
+
+            # select 문은, 아래 함수를 이용해서, 데이터를 가져온다.
+            result_list = cursor.fetchall()
+
+            print(result_list)
+
+            # 중요! 디비에서 가져온 timestamp 는 
+            # 파이썬의 datetime 으로 자동 변경된다.
+            # 문제는! 이데이터를 json 으로 바로 보낼수 없으므로,
+            # 문자열로 바꿔서 다시 저장해서 보낸다.
+            i = 0
+            for record in result_list :
+                result_list[i]['created_at'] = record['created_at'].isoformat()
+                result_list[i]['update_at'] = record['update_at'].isoformat()
+                i = i + 1                
+
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+
+            return {"error" : str(e)}, 503
+
+        # 3. result_list의 행의 갯수가 1개이면
+        # 유저 데이터를 정상적으로 받아온 것이고
+        # 행의 갯수가 0이면, 요청한 이메일은 회원가입이 되어 있지 않은 이메일이다.
+        if len(result_list) != 1 :
+            return {"error" : "회원가입이 안된 이메일입니다."}, 400
+        
+        # 4. 비밀번호가 맞는지 확인한다.
+        user_info = result_list[0]
+
+        # 4-1 data["password"] 와 user_info["password"]를 비교하기.
+        check = check_password(data["password"], user_info["password"])
+
+        if check == False :
+            return {"error" : "비밀번호가 일치하지 않습니다."}
+
+        return { "result" : "success",
+                 "user_id" : user_info["id"]}, 200
