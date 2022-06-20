@@ -26,12 +26,13 @@ class RecipeListResource(Resource) :
 
             # 2. 쿼리문 만들기
             query = '''insert into recipe
-                    (name, description, cook_time, directions)
+                    (name, description, cook_time, directions, user_id)
                     values
-                    (%s, %s, %s, %s);'''
+                    (%s, %s, %s, %s, %s);'''
 
             # %s에 맞게 튜플로 작성한다.
-            record = (data['name'], data['description'], data['cook_time'], data['directions'])
+            record = (data['name'], data['description'], data['cook_time'], data['directions'],
+                      data['user_id'])
             
             # 3. 커서를 가져온다.
             cursor = connection.cursor()

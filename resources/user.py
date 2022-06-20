@@ -99,7 +99,7 @@ class UserLoginResource(Resource) :
             query = '''select * 
                         from user
                         where email = %s;'''
-            
+            # 튜플로 설정할 것.
             record = (data["email"], )
 
             # select 문은, dictionary = True 를 해준다.
@@ -108,6 +108,7 @@ class UserLoginResource(Resource) :
             cursor.execute(query, record)
 
             # select 문은, 아래 함수를 이용해서, 데이터를 가져온다.
+            # fetchall() : 모든 데이터를 한번에 클라이언트로 가져올 때 사용한다.
             result_list = cursor.fetchall()
 
             print(result_list)
