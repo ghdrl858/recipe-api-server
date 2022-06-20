@@ -7,6 +7,7 @@ from mysql_connection import get_connection
 import mysql.connector
 from email_validator import validate_email, EmailNotValidError
 from utils import check_password, hash_password
+import datetime
 
 # 회원가입 코드
 class UserRegisterResource(Resource) :
@@ -81,7 +82,7 @@ class UserRegisterResource(Resource) :
 
         # user_id를 바로 보내면 안되고 JWT로 암호화해서 보내준다.
         # 암호화 하는 방법
-        access_token = create_access_token(user_id)
+        access_token = create_access_token(user_id, expires_delta = datetime.timedelta(minutes = 1))
 
 
         return {"result" : "success", "access_token" : access_token}, 200
@@ -153,7 +154,7 @@ class UserLoginResource(Resource) :
         if check == False :
             return {"error" : "비밀번호가 일치하지 않습니다."}
 
-        access_token = create_access_token(user_info['id'])
+        access_token = create_access_token(user_info['id'], expires_delta = datetime.timedelta(minutes = 1))
 
         return { "result" : "success",
                  "access_token" : access_token}, 200

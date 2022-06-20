@@ -22,6 +22,7 @@ class RecipeListResource(Resource) :
         # 클라이언트에서 body 부분에 작성한 json을 받아오는 코드
         data = request.get_json()
 
+        # ?
         user_id = get_jwt_identity()
 
         # 받아온 데이터를 DB에 저장하면 된다.
