@@ -5,6 +5,7 @@
 - app.py : 메인화면
 - mysql_conncection.py : mysql를 사용가능하게 파이썬으로 불러오기
 - test.py : test 기능
+- config.py : 환경설정(암호화키, 토큰 등등)
 
 < resources 폴더 >
  - recipe.py : 입력하기 및 목록가져오기
