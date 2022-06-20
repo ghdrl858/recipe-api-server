@@ -84,7 +84,6 @@ class UserRegisterResource(Resource) :
         # 암호화 하는 방법
         access_token = create_access_token(user_id, expires_delta = datetime.timedelta(minutes = 1))
 
-
         return {"result" : "success", "access_token" : access_token}, 200
 
 
