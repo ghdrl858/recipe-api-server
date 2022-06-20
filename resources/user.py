@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from flask import request
+from flask_jwt_extended import create_access_token
 from flask_restful import Resource
 from mysql.connector.errors import Error
 from mysql_connection import get_connection
@@ -7,6 +8,7 @@ import mysql.connector
 from email_validator import validate_email, EmailNotValidError
 from utils import check_password, hash_password
 
+# 회원가입 코드
 class UserRegisterResource(Resource) :
     def post(self) :
         
@@ -40,13 +42,12 @@ class UserRegisterResource(Resource) :
         print(hashed_password)
 
         # 5. DB에 회원정보를 저장한다.
-    
         try :
             # 데이터 insert
-            # 1. DB에 연결
+            # 1) DB에 연결
             connection = get_connection()
 
-            # 2. 쿼리문 만들기
+            # 2) 쿼리문 만들기
             query = '''insert into user
                     (username, email, password)
                     values
@@ -55,19 +56,19 @@ class UserRegisterResource(Resource) :
             # %s에 맞게 튜플로 작성한다.
             record = (data['username'], data['email'], hashed_password)
             
-            # 3. 커서를 가져온다.
+            # 3) 커서를 가져온다.
             cursor = connection.cursor()
 
-            # 4. 쿼리문을 커서를 이용해서 실행한다.
+            # 4) 쿼리문을 커서를 이용해서 실행한다.
             cursor.execute(query, record)
 
-            # 5. 커넥션을 커밋해줘야 한다. -> DB에 영구적으로 반영하라는 뜻
+            # 5) 커넥션을 커밋해줘야 한다. -> DB에 영구적으로 반영하라는 뜻
             connection.commit()
 
-            # 5-1. DB에 저장된 아이기값을 가져온다.
+            # 5-1) DB에 저장된 아이기값을 가져온다.
             user_id = cursor.lastrowid
 
-            # 6. 자원 해제
+            # 6) 자원 해제
             cursor.close()
             connection.close()
 
@@ -78,8 +79,12 @@ class UserRegisterResource(Resource) :
             connection.close()
             return {'error' : str(e)}, 503
 
+        # user_id를 바로 보내면 안되고 JWT로 암호화해서 보내준다.
+        # 암호화 하는 방법
+        access_token = create_access_token(user_id)
 
-        return {"result" : "success", "user_id" : user_id}, 200
+
+        return {"result" : "success", "user_id" : access_token}, 200
 
 
 class UserLoginResource(Resource) :
