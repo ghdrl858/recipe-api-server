@@ -43,8 +43,8 @@ class RecipePublishResource(Resource) :
 
         return {'result' : 'success'}, 200
 
-    # is_publish = 0으로
-    # 레시피를 임시저장한다.
+# is_publish = 0으로
+# 레시피를 임시저장한다.
     def delete(self, recipe_id) :
         try :
             # 데이터 Update
