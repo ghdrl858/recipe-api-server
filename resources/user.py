@@ -64,6 +64,9 @@ class UserRegisterResource(Resource) :
             # 5. 커넥션을 커밋해줘야 한다. -> DB에 영구적으로 반영하라는 뜻
             connection.commit()
 
+            # 5-1. DB에 저장된 아이기값을 가져온다.
+            user_id = cursor.lastrowid
+
             # 6. 자원 해제
             cursor.close()
             connection.close()
@@ -76,5 +79,9 @@ class UserRegisterResource(Resource) :
             return {'error' : str(e)}, 503
 
 
-        return {"result" : "success"}, 200
+        return {"result" : "success", "user_id" : user_id}, 200
 
+
+class UserLoginResource(Resource) :
+    def post(self) :
+        pass
