@@ -72,12 +72,13 @@ class RecipeResource(Resource) :
             # 1. DB에 연결
             connection = get_connection()
 
-            ### 먼저 recipe_id 에 들어있는 user_id가
-            ### 이 사람인지 먼저 확인한다.
+            # 먼저 recipe_id 에 들어있는 user_id가
+            # 해당되는 사람인지 먼저 확인한다.
 
             query = '''select user_id 
                         from recipe
                         where id = %s;'''
+                        
             record = (recipe_id, )
            
             cursor = connection.cursor(dictionary = True)
