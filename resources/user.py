@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from flask import request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt, jwt_required
 from flask_restful import Resource
 from mysql.connector.errors import Error
 from mysql_connection import get_connection
@@ -86,7 +86,7 @@ class UserRegisterResource(Resource) :
 
         return {"result" : "success", "access_token" : access_token}, 200
 
-
+# 로그인 코드
 class UserLoginResource(Resource) :
     def post(self) :
         # {
@@ -153,7 +153,21 @@ class UserLoginResource(Resource) :
         if check == False :
             return {"error" : "비밀번호가 일치하지 않습니다."}
 
-        access_token = create_access_token(user_info['id'], expires_delta = datetime.timedelta(minutes = 1))
-
+        access_token = create_access_token(user_info['id'])
         return { "result" : "success",
                  "access_token" : access_token}, 200
+
+# 로그아웃을 위한
+jwt_blocklist = set()
+
+# 로그아웃 코드
+class UserLogoutResource(Resource) :
+    @jwt_required()
+    def post(self) :
+        
+        jti = get_jwt()['jti']
+        print(jti)
+
+        jwt_blocklist.add(jti)
+
+        return {"result" : "로그아웃이 정상적으로 처리되었습니다."}, 200

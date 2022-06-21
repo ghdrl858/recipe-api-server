@@ -5,7 +5,7 @@ from config import Config
 from resources.recipe import RecipeListResource
 from resources.recipe_info import RecipeResource
 from resources.recipe_publish import RecipePublishResource
-from resources.user import UserLoginResource, UserRegisterResource
+from resources.user import UserLoginResource, UserRegisterResource, UserLogoutResource, jwt_blocklist
 
 app = Flask(__name__)
 
@@ -16,6 +16,12 @@ app.config.from_object(Config)
 # JWT를 관리해주는 라이브러리
 jwt = JWTManager(app)
 
+# 로그아웃 된 토큰이 들어있는 set을 jwt에 알려준다.
+@jwt.token_in_blocklist_loader
+def check_list_token_is_revoked(jwt_header, jwt_payload) :
+    jti = jwt_payload['jti']
+    return jti in jwt_blocklist
+
 api = Api(app)
 
 # 경로와 리소스(API코드) 연결
@@ -24,6 +30,7 @@ api.add_resource(RecipeResource, '/recipes/<int:recipe_id>')
 api.add_resource(RecipePublishResource, '/recipes/<int:recipe_id>/publish')
 api.add_resource(UserRegisterResource, '/users/register')
 api.add_resource(UserLoginResource, '/users/login')
+api.add_resource(UserLogoutResource, '/users/logout')
 
 if __name__ == '__main__' :
     app.run()
