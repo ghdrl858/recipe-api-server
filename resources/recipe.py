@@ -66,6 +66,9 @@ class RecipeListResource(Resource) :
     # 가져오기
     def get(self) :
         # 쿼리 스트링으로 오는 데이터는 아래처럼 처리해준다.
+        # REQUEST.ARGS는 딕셔너리다.
+        # OFFSET = REQUEST.ARGS['OFFSET']
+        # OFFSET = REQUEST.ARGS.GET('OFFSET')
         offset = request.args.get('offset')
         limit = request.args.get('limit')
 
